@@ -49,7 +49,7 @@ async function run() {
       res.send(result);
     });
 
-    // add a new party item
+    // add a new party item by from
     app.post('/foods', async(req, res) => {
       const newItem = req.body;
       console.log(newItem);
@@ -57,6 +57,7 @@ async function run() {
       res.send(result);
     });
 
+    // find specific item by _id
     app.get('/foods/:id', async (req, res) => {
       const id = req.params.id;
       console.log(id);
@@ -64,6 +65,16 @@ async function run() {
       const result = await partyCollection.findOne(query);
       res.send(result);
     });
+
+    // delete specific item by _id
+    app.delete('/foods/:id', async(req, res) => {
+      const id = req.params.id;
+      console.log(id);
+      const query = {_id: new ObjectId(id)};
+      const result = await partyCollection.deleteOne(query);
+      res.send(result);
+    });
+
     // =============================== codes add end.. ==================================
 
     // Send a ping to confirm a successful connection
