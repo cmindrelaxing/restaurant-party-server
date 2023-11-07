@@ -11,7 +11,14 @@ const port = process.env.PORT || 5000;
 
 app.use(express.json());
 const corsConfig = {
-  origin: "*",
+  origin: [
+    "*",
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "http://localhost:5175",
+    "http://localhost:5176",
+    "http://localhost:5177",
+  ],
   credentials: true,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
 };
@@ -72,6 +79,30 @@ async function run() {
       console.log(id);
       const query = {_id: new ObjectId(id)};
       const result = await partyCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    // update one food by _id
+    app.put('/foods/:id', async(req, res) => {
+      const id = req.params.id;
+      console.log(id);
+      const filter = {_id: new ObjectId(id)};
+      const options = { upsert: true };
+      const updateFood = req.body;
+      const food = {
+        $set: {
+          name: updateFood.name,
+          price: updateFood.price,
+          image: updateFood.image,
+          category: updateFood.category,
+          description: updateFood.description,
+          made: updateFood.made,
+          country: updateFood.country,
+          rating: updateFood.rating,
+        },
+      };
+
+      const result = await partyCollection.updateOne(filter, food, options);
       res.send(result);
     });
 
