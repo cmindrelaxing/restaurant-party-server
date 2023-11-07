@@ -56,6 +56,14 @@ async function run() {
       const result = await partyCollection.insertOne(newItem);
       res.send(result);
     });
+
+    app.get('/foods/:id', async (req, res) => {
+      const id = req.params.id;
+      console.log(id);
+      const query = {_id: new ObjectId(id)};
+      const result = await partyCollection.findOne(query);
+      res.send(result);
+    });
     // =============================== codes add end.. ==================================
 
     // Send a ping to confirm a successful connection
