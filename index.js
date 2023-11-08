@@ -56,14 +56,16 @@ async function run() {
     app.post("/jwt", async (req, res) => {
       const user = req.body;
       console.log(user);
-      const token = jwt.sign(user, process.env.SECRET_KEY, { expiresIn: "1h" });
+      const token = jwt.sign(user, process.env.SECRET_KEY, {
+        expiresIn: "1h",
+      });
       res
-      .cookie('token', token, {
-        httpOnly: true,
-        secure: false,
-        sameSite: 'none',
-      })
-      .send({success: true});
+        .cookie("token", token, {
+          httpOnly: true,
+          secure: true, 
+          sameSite: "none",
+        })
+        .send({ success: true });
     });
 
 
