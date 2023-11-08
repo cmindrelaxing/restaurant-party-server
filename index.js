@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+var jwt = require("jsonwebtoken");
 require("dotenv").config();
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const app = express();
@@ -49,6 +50,14 @@ async function run() {
 
     // =============================== codes add start ==================================
 
+    // auth api
+    app.post('/jwt', async(req, res) => {
+      const user = req.body;
+      console.log(user);
+      res.send(user);
+    });
+
+    // services api
     // find all party items
     app.get('/foods', async(req, res) => {
       const page = parseInt(req.query.page);
