@@ -51,7 +51,16 @@ async function run() {
 
     // find all party items
     app.get('/foods', async(req, res) => {
-      const result = await partyCollection.find().toArray();
+      const page = parseInt(req.query.page);
+      const size = parseInt(req.query.size);
+
+      console.log(page, size);
+
+      console.log('Pagination query', req.query);
+      const result = await partyCollection.find()
+      .skip(page * size)
+      .limit(size)
+      .toArray();
       console.log(result);
       res.send(result);
     });
@@ -104,6 +113,12 @@ async function run() {
 
       const result = await partyCollection.updateOne(filter, food, options);
       res.send(result);
+    });
+
+    // pagination for codes
+    app.get('/foodsCount', async(req, res) => {
+      const count = await partyCollection.estimatedDocumentCount();
+      res.send({count});
     });
 
     // =============================== codes add end.. ==================================
