@@ -107,11 +107,11 @@ async function run() {
       console.log('User visited in the validation process token', req.user);
       console.log('token comming', req.cookies.token);
 
-      // let query = {};
-      // if(req.query?.email) {
-      //   query = { email: req.query.email };
-      // }
-      const result = await orderFoodCollection.find().toArray();
+      let query = {};
+      if (req.query?.email) {
+        query = { email: req.query?.email };
+      }
+      const result = await orderFoodCollection.find(query).toArray();
       res.send(result);
     });
 
