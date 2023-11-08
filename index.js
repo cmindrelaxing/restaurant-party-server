@@ -46,6 +46,7 @@ async function run() {
 
     // =================================================================
     const partyCollection = client.db("partyDB").collection("foods");
+    const orderFoodCollection = client.db("partyDB").collection("bookings");
     // =================================================================
 
     // =============================== codes add start ==================================
@@ -56,6 +57,24 @@ async function run() {
       console.log(user);
       res.send(user);
     });
+
+
+
+    // order confirm
+   app.get('/bookings', async(req, res) => {
+    const result = await orderFoodCollection.find().toArray();
+    res.send(result);
+   });
+
+    // order a food item
+    app.post('/bookings', async(req, res) => {
+      const newOrder = req.body;
+      console.log(newOrder);
+      const result = await orderFoodCollection.insertOne(newOrder);
+      res.send(result);
+    });
+    
+    
 
     // services api
     // find all party items
