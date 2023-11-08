@@ -52,49 +52,64 @@ async function run() {
     // =============================== codes add start ==================================
 
     // auth api
-    app.post('/jwt', async(req, res) => {
+    app.post("/jwt", async (req, res) => {
       const user = req.body;
       console.log(user);
       res.send(user);
     });
 
-
-
     // order confirm
-   app.get('/bookings', async(req, res) => {
-    const result = await orderFoodCollection.find().toArray();
-    res.send(result);
-   });
+    app.get("/bookings", async (req, res) => {
+      const result = await orderFoodCollection.find().toArray();
+      res.send(result);
+    });
 
     // order a food item
-    app.post('/bookings', async(req, res) => {
+    app.post("/bookings", async (req, res) => {
       const newOrder = req.body;
       console.log(newOrder);
       const result = await orderFoodCollection.insertOne(newOrder);
       res.send(result);
     });
-    
-    
+
+    // find specific item by _id
+    app.get("/bookings/:id", async (req, res) => {
+      const id = req.params.id;
+      console.log(id);
+      const query = { _id: new ObjectId(id) };
+      const result = await orderFoodCollection.findOne(query);
+      res.send(result);
+    });
+
+    // delete specific item by _id
+    app.delete("/bookings/:id", async (req, res) => {
+      const id = req.params.id;
+      console.log(id);
+      const query = { _id: new ObjectId(id) };
+      const result = await orderFoodCollection.deleteOne(query);
+      res.send(result);
+    });
 
     // services api
     // find all party items
-    app.get('/foods', async(req, res) => {
+    app.get("/foods", async (req, res) => {
       const page = parseInt(req.query.page);
       const size = parseInt(req.query.size);
 
       console.log(page, size);
 
-      console.log('Pagination query', req.query);
-      const result = await partyCollection.find()
-      .skip(page * size)
-      .limit(size)
-      .toArray();
+      console.log("Pagination query", req.query);
+      const result = await partyCollection
+        .find()
+        .skip(page * size)
+        .limit(size)
+        .toArray();
       console.log(result);
       res.send(result);
     });
 
     // add a new party item by from
-    app.post('/foods', async(req, res) => {
+    app.post("/foods", async (req, res) => {
       const newItem = req.body;
       console.log(newItem);
       const result = await partyCollection.insertOne(newItem);
@@ -102,28 +117,28 @@ async function run() {
     });
 
     // find specific item by _id
-    app.get('/foods/:id', async (req, res) => {
+    app.get("/foods/:id", async (req, res) => {
       const id = req.params.id;
       console.log(id);
-      const query = {_id: new ObjectId(id)};
+      const query = { _id: new ObjectId(id) };
       const result = await partyCollection.findOne(query);
       res.send(result);
     });
 
     // delete specific item by _id
-    app.delete('/foods/:id', async(req, res) => {
+    app.delete("/foods/:id", async (req, res) => {
       const id = req.params.id;
       console.log(id);
-      const query = {_id: new ObjectId(id)};
+      const query = { _id: new ObjectId(id) };
       const result = await partyCollection.deleteOne(query);
       res.send(result);
     });
 
     // update one food by _id
-    app.put('/foods/:id', async(req, res) => {
+    app.put("/foods/:id", async (req, res) => {
       const id = req.params.id;
       console.log(id);
-      const filter = {_id: new ObjectId(id)};
+      const filter = { _id: new ObjectId(id) };
       const options = { upsert: true };
       const updateFood = req.body;
       const food = {
@@ -144,9 +159,9 @@ async function run() {
     });
 
     // pagination for codes
-    app.get('/foodsCount', async(req, res) => {
+    app.get("/foodsCount", async (req, res) => {
       const count = await partyCollection.estimatedDocumentCount();
-      res.send({count});
+      res.send({ count });
     });
 
     // =============================== codes add end.. ==================================
