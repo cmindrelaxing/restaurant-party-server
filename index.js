@@ -39,9 +39,20 @@ const verifyToken = async(req, res, next) => {
   const token = req.cookies?.token;
   console.log('value of token in middleware', token);
   if(!token) {
-    return res.send({ message: 'Unauthorized access', status: 401});
+    return res.status(401).send({ message: "Unauthorized access" });
   }
-  next();
+  jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
+    // error
+    if (err) {
+      console.log(err);
+      return res.status(401).send({message: 'Unauthorized access denied'});
+    }
+
+    // decoded
+    console.log('value in the token', decoded);
+    req.user = decoded;
+    next();
+  });
 };
 
 // =================================================================
@@ -93,6 +104,7 @@ async function run() {
     // order confirm
     app.get("/bookings", verifyToken, async (req, res) => {
       // console.log(req.query.email);
+      console.log('User visited in the validation process token', req.user);
       console.log('token comming', req.cookies.token);
 
       // let query = {};
