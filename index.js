@@ -51,12 +51,17 @@ async function run() {
 
     // =============================== codes add start ==================================
 
-    // auth api
+    // auth api jwt
     app.post("/jwt", async (req, res) => {
       const user = req.body;
       console.log(user);
-      res.send(user);
+      const token = jwt.sign(user, 'secret', {expiresIn: '1h'});
+      res.send(token);
     });
+
+
+
+
 
     // order confirm
     app.get("/bookings", async (req, res) => {
