@@ -25,6 +25,24 @@ const corsConfig = {
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
 };
 app.use(cors(corsConfig));
+app.use(cookieParser());
+
+
+
+// our middlewares
+const logger = async(req, res, next) => {
+  console.log('calling middleware', req.host, req.originalUrl);
+  next();
+};
+
+const verifyToken = async(req, res, next) => {
+  const token = req.cookies?.token;
+  console.log('value of token in middleware', token);
+  if(!token) {
+    return res.send({ message: 'Unauthorized access', status: 401});
+  }
+  next();
+};
 
 // =================================================================
 
@@ -53,7 +71,7 @@ async function run() {
     // =============================== codes add start ==================================
 
     // auth api jwt
-    app.post("/jwt", async (req, res) => {
+    app.post("/jwt", logger, async (req, res) => {
       const user = req.body;
       console.log(user);
       const token = jwt.sign(user, process.env.SECRET_KEY, {
@@ -73,7 +91,14 @@ async function run() {
 
 
     // order confirm
-    app.get("/bookings", async (req, res) => {
+    app.get("/bookings", verifyToken, async (req, res) => {
+      // console.log(req.query.email);
+      console.log('token comming', req.cookies.token);
+
+      // let query = {};
+      // if(req.query?.email) {
+      //   query = { email: req.query.email };
+      // }
       const result = await orderFoodCollection.find().toArray();
       res.send(result);
     });
