@@ -11,16 +11,15 @@ const port = process.env.PORT || 5000;
 // app.use(cors());
 // app.use(express.json());
 
+
+// =================================================================
+
+// =================================================================
+
+
 app.use(express.json());
 const corsConfig = {
-  origin: [
-    "*",
-    "http://localhost:5173",
-    "http://localhost:5174",
-    "http://localhost:5175",
-    "http://localhost:5176",
-    "http://localhost:5177",
-  ],
+  origin: "*",
   credentials: true,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
 };
@@ -82,7 +81,7 @@ async function run() {
     // =============================== codes add start ==================================
 
     // auth api jwt
-    app.post("/jwt", logger, async (req, res) => {
+    app.post("/jwt", async (req, res) => {
       const user = req.body;
       console.log(user);
       const token = jwt.sign(user, process.env.SECRET_KEY, {
@@ -102,7 +101,7 @@ async function run() {
 
 
     // order confirm
-    app.get("/bookings", verifyToken, async (req, res) => {
+    app.get("/bookings", async (req, res) => {
       // console.log(req.query.email);
       console.log('User visited in the validation process token', req.user);
       console.log('token comming', req.cookies.token);
