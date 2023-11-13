@@ -13,45 +13,34 @@ const port = process.env.PORT || 5000;
 
 app.use(express.json());
 const corsConfig = {
-  origin: [
-    "*",
-    "http://localhost:5173",
-    "http://localhost:5174",
-    "http://localhost:5175",
-    "http://localhost:5176",
-    "http://localhost:5177",
-  ],
-
-  // origin: "*",
+  origin: "*",
   credentials: true,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
 };
 app.use(cors(corsConfig));
 app.use(cookieParser());
 
-
-
 // our middlewares
-const logger = async(req, res, next) => {
-  console.log('calling middleware', req.host, req.originalUrl);
+const logger = async (req, res, next) => {
+  console.log("calling middleware", req.host, req.originalUrl);
   next();
 };
 
-const verifyToken = async(req, res, next) => {
+const verifyToken = async (req, res, next) => {
   const token = req.cookies?.token;
-  console.log('value of token in middleware', token);
-  if(!token) {
+  console.log("value of token in middleware", token);
+  if (!token) {
     return res.status(401).send({ message: "Unauthorized access" });
   }
   jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
     // error
     if (err) {
       console.log(err);
-      return res.status(401).send({message: 'Unauthorized access denied'});
+      return res.status(401).send({ message: "Unauthorized access denied" });
     }
 
     // decoded
-    console.log('value in the token', decoded);
+    console.log("value in the token", decoded);
     req.user = decoded;
     next();
   });
@@ -84,7 +73,7 @@ async function run() {
     // =============================== codes add start ==================================
 
     // auth api jwt
-    app.post("/jwt", logger, async (req, res) => {
+    app.post("/jwt", async (req, res) => {
       const user = req.body;
       console.log(user);
       const token = jwt.sign(user, process.env.SECRET_KEY, {
@@ -93,21 +82,17 @@ async function run() {
       res
         .cookie("token", token, {
           httpOnly: true,
-          secure: true, 
+          secure: true,
           sameSite: "none",
         })
         .send({ success: true });
     });
 
-
-
-
-
     // order confirm
-    app.get("/bookings", verifyToken, async (req, res) => {
+    app.get("/bookings", async (req, res) => {
       // console.log(req.query.email);
-      console.log('User visited in the validation process token', req.user);
-      console.log('token comming', req.cookies.token);
+      console.log("User visited in the validation process token", req.user);
+      console.log("token comming", req.cookies.token);
 
       let query = {};
       if (req.query?.email) {
